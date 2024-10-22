@@ -1,4 +1,5 @@
 import math
+import pandas as pd
 
 def geo_to_cat(lat1, lon1, lat2 = 0, lon2 = 0):
   # 1-> origem
@@ -8,6 +9,11 @@ def geo_to_cat(lat1, lon1, lat2 = 0, lon2 = 0):
   dy = (lat1-lat2)*40000/360
   return(dx,dy)
 
+# Load data from CSV
+def load_dist_csv(file_path):
+    df = pd.read_csv(file_path)
+    df['duracao_minutos'] = df['duracao'].apply(parse_duration)
+    return df
 
 # Function to parse time from string to total minutes
 def parse_duration(duration_str):
