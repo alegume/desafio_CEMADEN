@@ -18,8 +18,6 @@ distancia_file = os.path.join(script_dir, "..", "input", "distancias.csv")
 shap_file = os.path.join(script_dir, "..", "input", "SHAP_agregado.csv")
 coordenadas_file = os.path.join(script_dir, "..", "input", "coordenadas.csv")
 
-print(coordenadas_file)
-
 # Load the CSV file
 df = pd.read_csv(coordenadas_file)
 
@@ -168,7 +166,6 @@ _, ax = plt.subplots(figsize=(8, 8))
 plot_solution(res.best, m.data(), plot_clients=True, ax=ax)
 
 # Curvas
-
 m = Model()
 
 depot = m.add_depot(x=coord_cart[-1][0], y=coord_cart[-1][1])
@@ -195,7 +192,7 @@ for frm in locations:
         else:
           m.add_edge(frm, to, distance=distance,duration = travel_time.get((frm, to), 0))
 
-res = m.solve(stop=MaxRuntime(3), display=False)
+res = m.solve(stop=MaxRuntime(2), display=True)
 print(res)
 
 _, ax = plt.subplots(figsize=(8, 8))
@@ -205,3 +202,7 @@ plot_solution(res.best, m.data(), ax=ax)
 
 for i in range(n):
   ax.scatter(coord_cart[i][0], coord_cart[i][1], color = dict_color[dicionario_loc_to_class[coord_cart[i][2]][0]])
+
+fig = os.path.join(script_dir, "..", "output", "solution_TOP.png")
+plt.savefig(fig, dpi=300)
+plt.show()
