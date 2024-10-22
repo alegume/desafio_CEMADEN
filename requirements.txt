@@ -1,0 +1,5 @@
+pyvrp
+virtualenv
+folium
+pandas
+requests
