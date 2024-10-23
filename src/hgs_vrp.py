@@ -10,6 +10,7 @@ from pyvrp.plotting import plot_coordinates
 from pyvrp.stop import MaxRuntime
 from pyvrp.plotting import plot_solution
 from folium import plugins
+from datetime import timedelta
 from routes_functions import *
 from shap_functions import *
 
@@ -97,15 +98,46 @@ for frm in locations:
       m.add_edge(frm, to, distance = distance, duration = duration)
 
 res = m.solve(stop=MaxRuntime(2), display=False)
-print(res.best)
+# print(res.best)
 
-# Extract the visited locations from the solution
+# Extract the visited locations and metrics from the solution
+print("\t Rotas encontradas: \n")
 visited_locations = set()
+i = 0
 for route in res.best.routes():
-  for loc in route:
-    visited_locations.add(locations[loc].name)
+  total_time = travel_time.get((depot_name, locations[route[0]].name), 0)
+  total_dist = travel_dist.get((depot_name, locations[route[0]].name), 0)
+  # print(depot_name, '->', locations[route[0]].name, 'dist: ', total_dist, 'time: ', total_time)
+  i += 1
 
-print(visited_locations)
+  print(f"Rota {i}: {depot_name}", end=", ")
+
+  for j in range(len(route)):
+    start = locations[route[j]].name
+    end = locations[route[j + 1]].name if (j + 1 < len(route)) else depot_name
+    # print(f"start {start}; end {end} ")
+    visited_locations.add(start)
+    print(f"{start}", end=", ")
+    # print(f" (d {total_dist}; t {total_time} )")
+    total_time += travel_time.get((start, end), 0)
+    total_dist += travel_dist.get((start, end), 0)
+
+  time_delta = timedelta(minutes=total_time)
+  hours, remainder = divmod(time_delta.seconds, 3600)
+  minutes = remainder // 60
+  print(f"{depot_name}.")
+  print(f"Distância total: {total_dist} km")
+  print(f"Tempo de total de viagem: {hours} horas e {minutes} minutos \n")
+
+
+# Rota 1:
+# Villa_Soriano, Cuñapirú, Manuel_Díaz, Laguna_II, San_Gregorio, Pereira, Aguiar, Mazagano, Villa_Soriano
+# Rota 2:
+# Villa_Soriano, Mercedes, Paso_de_Lugo, Salsipuedes, Paso_de_los_toros, Bonete, Durazno, Polanco, Sarandi_del_Yi, Villa_Soriano
+
+
+
+exit()
 # Create figure and axis
 _, ax = plt.subplots(figsize=(10, 10))
 
@@ -113,20 +145,18 @@ _, ax = plt.subplots(figsize=(10, 10))
 plot_solution(res.best, m.data(), plot_clients=False, ax=ax)
 
 dict_color = {0: 'r', 1: 'b', 2: 'y'}
-
 # Loop through all locations and plot them
 for loc in coord.itertuples():
   color = 'r' if (loc.name == depot_name) else dict_color[shap_class[loc.name]]
   
   # Check if the location is the depot
   if loc.name == depot_name:
-    ax.scatter(coord_cart[loc.name][0], coord_cart[loc.name][1], color='r', label='Depot', s=100)
+    pass
+    # ax.scatter(coord_cart[loc.name][0], coord_cart[loc.name][1], color='r', label='Depot', s=100)
   elif loc.name in visited_locations:
-    print("V: ", loc.name)
     # Plot visited locations as dots
     ax.scatter(coord_cart[loc.name][0], coord_cart[loc.name][1], color=color, label=f"Classe {shap_class[loc.name]}", s=50)
   else:
-    print("NV: ", loc.name)
     # Plot unvisited locations with 'X' marker
     ax.scatter(coord_cart[loc.name][0], coord_cart[loc.name][1], color='gray', marker='x', label='Não visitado', s=50)
 
