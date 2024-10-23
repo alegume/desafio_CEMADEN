@@ -11,12 +11,12 @@ from pyvrp.stop import MaxRuntime
 from pyvrp.plotting import plot_solution
 from folium import plugins
 from datetime import timedelta
-from routes_functions import *
-from shap_functions import *
-from misc_functions import *
+from src.routes_functions import *
+from src.shap_functions import *
+from src.misc_functions import *
 
 def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
-            n_vehicle = 2, days = 5, hour_per_day = 8, man_time = 240, max_run_time = 5, show_plot = False):
+        n_vehicle = 2, days = 5, hour_per_day = 8, man_time = 240, max_run_time = 5, show_plot = False):
     # Load the CSV files
     coord = pd.read_csv(coord_file)
     data = load_dist_csv(dist_file)
@@ -152,29 +152,9 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
     ax.legend(by_label.values(), by_label.keys())
 
     # Save the plot as an image
-    fig = os.path.join(script_dir, "..", "output", "solution_TOP.png")
+    fig = os.path.join("output", "solution_TOP.png")
     plt.savefig(fig, dpi=300)
 
     # Optionally display the plot
     if (show_plot):
         plt.show()
-
-
-if __name__ == "__main__":
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    dist_file = os.path.join(script_dir, "..", "input", "distancias.csv")
-    shap_file = os.path.join(script_dir, "..", "input", "SHAP_agregado.csv")
-    coord_file = os.path.join(script_dir, "..", "input", "coordenadas.csv")
-
-    hgs_top(
-        dist_file = dist_file,
-        shap_file = shap_file,
-        coord_file = coord_file,
-        depot_pos = -1,
-        n_vehicle = 2, 
-        days = 5, 
-        hour_per_day = 8,
-        man_time = 240,
-        max_run_time = 2,
-        show_plot = False
-    )
