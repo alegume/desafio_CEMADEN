@@ -1,6 +1,7 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
+import shap
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
@@ -8,7 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime
 from sklearn.model_selection import train_test_split
-import shap
 from sklearn.cluster import KMeans
 import seaborn as sns
 # from scipy.stats import norm, probplot
