@@ -5,6 +5,7 @@ def load_shap_csv(file_path):
     df = pd.read_csv(file_path)
     return df
 
+
 # TODO: trabalhar com location e não com sensor
 def sum_shap_per_location(shap_data, locations):
     shap_score = {loc: 0 for loc in locations}

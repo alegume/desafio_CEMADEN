@@ -1,4 +1,8 @@
 from datetime import timedelta
+import numpy as np
+
+def nse(predictions, targets):
+  return 1 - (np.sum((targets - predictions) ** 2) / np.sum((targets - np.mean(targets)) ** 2))
 
 def format_time(total_time):
     """

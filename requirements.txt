@@ -3,3 +3,9 @@ virtualenv
 folium
 pandas
 requests
+keras
+shap
+tensorflow
+numpy
+seaborn
+ipython

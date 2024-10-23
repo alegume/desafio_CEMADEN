@@ -11,8 +11,8 @@ from pyvrp.stop import MaxRuntime
 from pyvrp.plotting import plot_solution
 from folium import plugins
 from datetime import timedelta
-from src.routes_functions import *
-from src.shap_functions import *
+from src.routes import *
+from shap_misc import *
 from src.misc_functions import *
 
 def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
