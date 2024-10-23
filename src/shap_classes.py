@@ -11,9 +11,10 @@ from sklearn.model_selection import train_test_split
 import shap
 from sklearn.cluster import KMeans
 import seaborn as sns
-from scipy.stats import norm, probplot
-from scipy.stats import shapiro, kstest, norm
+# from scipy.stats import norm, probplot
+# from scipy.stats import shapiro, kstest, norm
 # from sklearn.metrics import mean_squared_error
+
 from src.misc_functions import *
 from src.shap_misc import *
 
@@ -150,7 +151,8 @@ def save_shap(model, x_test):
     feature_classes.to_csv('output/shap_agregado_classes.csv', index=False)
 
 
-def save_shap_with_location(model, x_test, locations):
+def save_shap_with_location(model_file, x_test, locations):
+    model = load_model(model_file)
     explainer = shap.DeepExplainer(model, x_test)
     shap_values = explainer.shap_values(x_test)
     shap.plots.initjs()
@@ -181,9 +183,11 @@ def save_shap_with_location(model, x_test, locations):
     low_threshold = np.percentile(shap_location_df['Total_SHAP_Value'], 33)
 
     # Classify locations into A, B, C based on SHAP values
-    shap_location_df['Classe'] = pd.cut(shap_location_df['Total_SHAP_Value'],
-                                        bins=[-np.inf, low_threshold, high_threshold, np.inf],
-                                        labels=['C', 'B', 'A'])
+    shap_location_df['Classe'] = pd.cut(
+        shap_location_df['Total_SHAP_Value'],
+        bins = [-np.inf, low_threshold, high_threshold, np.inf],
+        labels=['C', 'B', 'A']
+    )
 
     # Sort by Class (A > B > C) and within each class by Total SHAP Value in descending order
     shap_location_df['Class_Rank'] = shap_location_df['Classe'].map({'A': 0, 'B': 1, 'C': 2})
@@ -196,7 +200,7 @@ def save_shap_with_location(model, x_test, locations):
     colors = {0: '#FF6347', 1: '#FFA500', 2: '#32CD32'}
     sorted_locations = shap_location_df.sort_values(by='Total_SHAP_Value', ascending=False)
 
-    for class_rank, group_data in sorted_locations.groupby('Class_Rank'):
+    for class_rank, group_data in sorted_locations.groupby('Class_Rank', observed=False):
         plt.barh(
             # reverse to correct order
             group_data['Location'][::-1],  

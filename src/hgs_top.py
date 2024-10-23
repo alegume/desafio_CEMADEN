@@ -22,8 +22,10 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
     data = load_dist_csv(dist_file)
     shap_data = load_shap_csv(shap_file)
 
-    # TODO: trabalhar com location e não com sensor    !!!
-    (shap_score, shap_class) = sum_shap_per_location(shap_data, data['origem_nome'].unique())
+
+    # (shap_score, shap_class) = sum_shap_per_location(shap_data, data['origem_nome'].unique())
+    shap_score = shap_data.set_index('Location')['Total_SHAP_Value'].to_dict()
+    shap_class = shap_data.set_index('Location')['Class_Rank'].to_dict()
     locations = pd.concat([data['origem_nome'], data['destino_nome']]).unique()
 
     depot_name = locations[depot_pos]
@@ -60,6 +62,8 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
     clients = []
     alpha = 10000000
     for loc in coord.itertuples():
+        if loc.name == depot_name:
+            continue
         clients.append(
             m.add_client(
                 x = coord_cart[loc.name][0], 
