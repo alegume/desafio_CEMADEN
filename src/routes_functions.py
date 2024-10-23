@@ -2,12 +2,11 @@ import math
 import pandas as pd
 
 def geo_to_cat(lat1, lon1, lat2 = 0, lon2 = 0):
-  # 1-> origem
-  # 2-> ponto móvel
-
-  dx = (lon1-lon2)*40000*math.cos((lat1+lat2)*math.pi/360)/360
-  dy = (lat1-lat2)*40000/360
-  return(dx,dy)
+    # 1-> origem
+    # 2-> ponto móvel
+    dx = (lon1-lon2)*40000*math.cos((lat1+lat2)*math.pi/360)/360
+    dy = (lat1-lat2)*40000/360
+    return(dx,dy)
 
 # Load data from CSV
 def load_dist_csv(file_path):

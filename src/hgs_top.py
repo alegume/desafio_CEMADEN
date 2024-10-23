@@ -16,7 +16,7 @@ from shap_functions import *
 from misc_functions import *
 
 def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
-            n_vehicle = 2, days = 5, hour_per_day = 8, man_time = 240, max_run_time = 5):
+            n_vehicle = 2, days = 5, hour_per_day = 8, man_time = 240, max_run_time = 5, show_plot = False):
     # Load the CSV files
     coord = pd.read_csv(coord_file)
     data = load_dist_csv(dist_file)
@@ -110,7 +110,7 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
         total_dist += route_dist
         print(f"{depot_name}.")
         print(f"Distância: {route_dist} km")
-        print(f"Tempo de viagem: {formatted_time}")
+        print(f"Tempo de viagem: {formatted_time} \n")
 
     shap_total = 0
     for loc in visited_locations:
@@ -152,11 +152,12 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
     ax.legend(by_label.values(), by_label.keys())
 
     # Save the plot as an image
-    fig = os.path.join(script_dir, "..", "output", "solution_TOP2.png")
+    fig = os.path.join(script_dir, "..", "output", "solution_TOP.png")
     plt.savefig(fig, dpi=300)
 
     # Optionally display the plot
-    plt.show()
+    if (show_plot):
+        plt.show()
 
 
 if __name__ == "__main__":
@@ -174,5 +175,6 @@ if __name__ == "__main__":
         days = 5, 
         hour_per_day = 8,
         man_time = 240,
-        max_run_time = 2
+        max_run_time = 2,
+        show_plot = False
     )
