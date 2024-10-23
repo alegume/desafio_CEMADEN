@@ -5,6 +5,7 @@ def load_shap_csv(file_path):
     df = pd.read_csv(file_path)
     return df
 
+# TODO: trabalhar com location e não com sensor
 def sum_shap_per_location(shap_data, locations):
   shap_score = {loc: 0 for loc in locations}
   shap_class = {loc: float('inf') for loc in locations}  # Start with high values for Class_Rank
@@ -25,9 +26,10 @@ def sum_shap_per_location(shap_data, locations):
   # Create the final class assignments based on the lowest Class_Rank
   final_class_assignments = {}
   for loc, score in sorted_locations:
-    final_class_assignments[loc] = shap_class[loc]  # Use the minimum Class_Rank for this location
+    final_class_assignments[loc] = shap_class[loc]  
 
   return shap_score, final_class_assignments
+
 
 # def sum_shap_per_location(shap_data, locations):
 #   shap_score = {loc: 0 for loc in locations}
