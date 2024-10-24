@@ -10,20 +10,19 @@ from pyvrp.plotting import plot_coordinates
 from pyvrp.stop import MaxRuntime
 from pyvrp.plotting import plot_solution
 from folium import plugins
-from datetime import timedelta
 from src.routes import *
 from src.shap_misc import *
 from src.misc_functions import *
 
 def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
-        n_vehicle = 2, days = 5, hour_per_day = 8, man_time = 240, max_run_time = 5, show_plot = False):
+            n_vehicle = 2, days = 5, hour_per_day = 8, 
+            man_time = 240, max_run_time = 5, show_plot = False):
+
     # Load the CSV files
     coord = pd.read_csv(coord_file)
     data = load_dist_csv(dist_file)
     shap_data = load_shap_csv(shap_file)
 
-
-    # (shap_score, shap_class) = sum_shap_per_location(shap_data, data['origem_nome'].unique())
     shap_score = shap_data.set_index('Location')['Total_SHAP_Value'].to_dict()
     shap_class = shap_data.set_index('Location')['Class_Rank'].to_dict()
     locations = pd.concat([data['origem_nome'], data['destino_nome']]).unique()
@@ -45,8 +44,9 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
         (dx, dy) = geo_to_cat(loc.lat, loc.lon, flat, flon)
         coord_cart[loc.name] = (dx, dy)
 
-    # PyVRP model
+    ## PyVRP model, depot, vehicle and clients
     m = Model()
+
     depot = m.add_depot(
         x = coord_cart[depot_name][0],
         y = coord_cart[depot_name][1]
@@ -60,19 +60,18 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
     )
 
     clients = []
-    alpha = 10000000
+    alpha = 10_000_000
     for loc in coord.itertuples():
         if loc.name == depot_name:
             continue
         clients.append(
             m.add_client(
-                x = coord_cart[loc.name][0], 
-                y = coord_cart[loc.name][1], 
-                service_duration = man_time,
-                prize = alpha * shap_score[loc.name],
+                x = int(coord_cart[loc.name][0]),
+                y = int(coord_cart[loc.name][1]),
+                service_duration = int(man_time),
+                prize = int(alpha * shap_score[loc.name]),
                 # True if it is Class A (ClassRank == 0)
-                required = (shap_class[loc.name] == 0), 
-                # required = False, 
+                required = (shap_class[loc.name] == 0),
                 name = loc.name
             )
         )
@@ -100,7 +99,6 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
         i += 1
 
         print(f"Rota {i}: {depot_name}", end=", ")
-
         for j in range(len(route)):
             start = locations[route[j]].name
             end = locations[route[j + 1]].name if (j + 1 < len(route)) else depot_name
@@ -113,7 +111,7 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
         total_time += route_time
         total_dist += route_dist
         print(f"{depot_name}.")
-        print(f"Distância: {route_dist} km")
+        print(f"Distância: {route_dist:.2f} km")
         print(f"Tempo de viagem: {formatted_time} \n")
 
     shap_total = 0
@@ -123,19 +121,17 @@ def hgs_top(dist_file, shap_file, coord_file, depot_pos = -1,
     formatted_time = format_time(total_time)
     print("\t Sumário:")
     print(f"SHAP agregado total: {shap_total:.4f}")
-    print(f"Distância total: {total_dist} km")
-    print(f"Tempo de total: {formatted_time}")
+    print(f"Distância total: {total_dist:.2f} km")
+    print(f"Tempo de viagem total: {formatted_time}")
 
 
-    # Create figure and axis
+    ## Ploting
     _, ax = plt.subplots(figsize=(10, 10))
-
-    # Plot the solution without plotting clients, as you want to control this manually
     plot_solution(res.best, m.data(), plot_clients=False, ax=ax)
 
     dict_color = {0: 'r', 1: 'b', 2: 'y'}
     dict_class = {0: 'A', 1: 'B', 2: 'C'}
-    # Loop through all locations and plot them
+    # Loop through all locations
     for loc in coord.itertuples():
         color = 'r' if (loc.name == depot_name) else dict_color[shap_class[loc.name]]
         

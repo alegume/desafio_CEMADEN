@@ -209,13 +209,12 @@ def save_shap_with_location(model_file, x_test, locations):
             label=f'Classe {["A", "B", "C"][class_rank]}'
         )
 
-    plt.xlabel('Total SHAP Value per Location')
-    plt.ylabel('Location')
-    plt.title('Classificação por Localização baseada nos valores SHAP')
+    plt.xlabel('Valor de SHAP agregado')
+    plt.ylabel('Localização')
+    plt.title('Classificação de prioridade baseada nos valores SHAP')
     plt.legend()
     plt.tight_layout()
     plt.savefig('output/shap_classes_locations.png')
-
 
 
 ##### MAIN

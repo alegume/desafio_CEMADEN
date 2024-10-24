@@ -22,11 +22,15 @@ pip install -r requirements.txt
 
 ### TODO
 
-- Refac locations SHAP
+- Incluir modelo matemático
+- Parametrização da aplicação (CLI)
+- Testar Clusterização
+- Exemplo com outra Rede Neural
 
 
 ### DONE
 
+- Refac locations SHAP
 - Salvar resultados SHAP
 - Trabalhar com location e não com sensor
 - Refatorar e testar HGS

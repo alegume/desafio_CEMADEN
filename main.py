@@ -22,22 +22,24 @@ def main():
     locations = locations[locations != 'Villa_Soriano']
     
     test = pd.read_csv(data_test_file)
-    sh.save_shap_with_location(model_file, test.values, locations)
+
+    ## Generate SHAP, classes and plotings
+    # sh.save_shap_with_location(model_file, test.values, locations)
 
 
     ## Solve TOP using HGS 
-    # hgs.hgs_top(
-    #     dist_file = dist_file,
-    #     shap_file = shap_file,
-    #     coord_file = coord_file,
-    #     depot_pos = depot_pos,
-    #     n_vehicle = 2, 
-    #     days = 5, 
-    #     hour_per_day = 8,
-    #     man_time = 240,
-    #     max_run_time = 2,
-    #     show_plot = False
-    # )
+    hgs.hgs_top(
+        dist_file = dist_file,
+        shap_file = shap_file,
+        coord_file = coord_file,
+        depot_pos = depot_pos,
+        n_vehicle = 2, 
+        days = 5, 
+        hour_per_day = 8,
+        man_time = 240,
+        max_run_time = 1,
+        show_plot = False
+    )
 
 
 if __name__ == "__main__":
